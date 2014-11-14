@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 		Class.forName("org.postgresql.Driver");
 		con = DriverManager.getConnection(url,username,password);
 		st = con.createStatement();
+		
 		}catch (ClassNotFoundException ee)
 		    {
 		      ee.printStackTrace();
@@ -46,7 +47,9 @@ import javax.swing.table.DefaultTableModel;
 	public void execute(String SQL)
 	{
 		try{
+			
 			ResultSet rs = st.executeQuery(SQL);
+		
 			while(rs.next())
 				{
 				ArrayList<String> temp = new ArrayList<String>();
@@ -65,8 +68,24 @@ import javax.swing.table.DefaultTableModel;
 	}
 	public void printResult(ArrayList<ArrayList<String>> ss)
 	{
-		   tmpTableData = new String[ss.size()][ss.get(0).size()];
-		  for(int i = 0; i < ss.size(); i++)for(int j = 0; j < ss.get(i).size(); j++)tmpTableData[i][j] = ss.get(i).get(j);
+		ArrayList<ArrayList<String>> sort = new ArrayList<ArrayList<String>>();
+		for(int i = 0; i < ss.size(); i++){
+			if(i == 0 ||  Long.parseLong(ss.get(i-1).get(2)) <  Long.parseLong(ss.get(i).get(2))){
+				sort.add(ss.get(i));
+				}
+			
+			else {
+				ArrayList<ArrayList<String>> temp = new ArrayList<ArrayList<String>>();
+				temp.add(ss.get(i));
+				for(int k = 0; k < sort.size(); k++)temp.add(sort.get(k));
+				    sort = temp;
+					
+				}
+		}
+		
+	
+		   tmpTableData = new String[sort.size()][sort.get(0).size()];
+		  for(int i = 0; i < sort.size(); i++)for(int j = 0; j < sort.get(i).size(); j++)tmpTableData[i][j] = sort.get(i).get(j);
 		  BookField = new String[]{"text","user_name","user_id"};
 		  tmodel = new DefaultTableModel(tmpTableData,BookField);
 		  book = new JTable(tmodel);
